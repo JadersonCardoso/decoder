@@ -1,3 +1,3 @@
-# decoder
+# Decoder
 
-Curso de microserviços DECODER. 
+Repositório do Curso de Microserviços # DECODER. 
