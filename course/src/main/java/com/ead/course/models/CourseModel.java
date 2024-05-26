@@ -4,12 +4,18 @@ import com.ead.course.enums.CourseLevel;
 import com.ead.course.enums.CourseStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -43,4 +49,10 @@ public class CourseModel implements Serializable {
     private CourseLevel courseLevel;
     @Column(nullable = false)
     private UUID userInstructor;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)//cascade = CascadeType.ALL, orphanRemoval = true delega ao JPA
+    @Fetch(FetchMode.SUBSELECT)
+    //@OnDelete(action = OnDeleteAction.CASCADE) //delega ao banco de dados a responsabilidade de apagar os modulos
+    private Set<ModuleModel> modules;
 }
