@@ -6,6 +6,8 @@ import com.ead.authuser.enums.UserType;
 import com.ead.authuser.models.UserModel;
 import com.ead.authuser.services.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import java.time.ZoneId;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/auth")
 public class AuthenticationController {
+
+    Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     private final UserService userService;
 
@@ -47,4 +51,14 @@ public class AuthenticationController {
         this.userService.save(userModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
     }
+    @GetMapping("/")
+    public String index() {
+        logger.trace("TRACE"); //detalhado
+        logger.debug("DEBUG"); //ambiente de desenvolvimento
+        logger.info("INFO"); // ambiente de produção
+        logger.warn("WARN"); // informações de imcompatibilidade
+        logger.error("ERROR"); //erro durante o processo,detalhes do erro gerado, blocos try catch
+        return "Logginf Strong Boot...";
+    }
+
 }
