@@ -55,4 +55,7 @@ public class CourseModel implements Serializable {
     @Fetch(FetchMode.SUBSELECT)
     //@OnDelete(action = OnDeleteAction.CASCADE) //delega ao banco de dados a responsabilidade de apagar os modulos
     private Set<ModuleModel> modules;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private Set<CourseUserModel> coursesUsers;
 }
