@@ -5,6 +5,7 @@ import com.ead.authuser.models.UserModel;
 import com.ead.authuser.services.UserService;
 import com.ead.authuser.specifications.SpecificationTemplate;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 import java.util.UUID;
-
+@Log4j2
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/users")
@@ -55,11 +56,14 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable(value = "userId") UUID userId) {
+        log.debug("DELETE deleteUser userId received {} ",userId);
         Optional<UserModel> userModelOptional = this.userService.findById(userId);
         if (!userModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
         this.userService.delete(userModelOptional.get());
+        log.debug("DELET deleteUser userId received {} ",userId);
+        log.info("User deleted successfully userId {} ",userId);
         return ResponseEntity.ok("User deleted success");
     }
 
@@ -67,6 +71,7 @@ public class UserController {
     public ResponseEntity<?> updateUser(@PathVariable(value = "userId") UUID userId,
                                         @RequestBody @Validated(UserDto.UserView.UserPut.class)
                                         @JsonView(UserDto.UserView.UserPut.class) UserDto userDto) {
+        log.debug("PUT updateUser userDto received {} ",userDto.toString());
         Optional<UserModel> userModelOptional = this.userService.findById(userId);
         if (!userModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
@@ -77,6 +82,8 @@ public class UserController {
         userModel.setCpf(userDto.getCpf());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         this.userService.save(userModel);
+        log.debug("PUT updateUser userModel received {} ",userModel.toString());
+        log.info("User updated successfully userId {} ",userModel.getUserId());
         return ResponseEntity.ok(userModel);
     }
 
@@ -86,8 +93,10 @@ public class UserController {
                                             @JsonView(UserDto.UserView.PasswordPut.class) UserDto userDto) {
         Optional<UserModel> userModelOptional = this.userService.findById(userId);
         if (!userModelOptional.isPresent()) {
+            log.warn("Username {} is Already Taken. ",userDto.getUserName());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         } if (userModelOptional.get().getPassword().equals(userDto.getOldPassword())) {
+            log.warn("Mismatched old passworld userId. ",userId);
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Mismatched old passworld!");
         }
         var userModel = userModelOptional.get();
