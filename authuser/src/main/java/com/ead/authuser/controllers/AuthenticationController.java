@@ -6,8 +6,7 @@ import com.ead.authuser.enums.UserType;
 import com.ead.authuser.models.UserModel;
 import com.ead.authuser.services.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-
+@Log4j2
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+//    Logger logger = LogManager.getLogger(AuthenticationController.class);
 
     private final UserService userService;
 
@@ -34,11 +33,12 @@ public class AuthenticationController {
     public ResponseEntity<?> registerUser(@RequestBody
                                               @Validated(UserDto.UserView.RegistrationPost.class)
                                               @JsonView(UserDto.UserView.RegistrationPost.class) UserDto userDto) {
-
+        log.debug("POST registerUser userDto received {} ",userDto.toString());
         if (this.userService.existsByUsername(userDto.getUserName())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Username is Already Taken!");
         }
         if (this.userService.existsByEmail(userDto.getEmail())) {
+            log.warn("Email {} is Already Taken. ",userDto.getEmail());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is Already Taken!");
         }
 
@@ -49,15 +49,17 @@ public class AuthenticationController {
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
         this.userService.save(userModel);
+        log.debug("POST registerUser userModel received {} ",userModel.toString());
+        log.info("User saved successfully userId {} ",userModel.getUserId());
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
     }
     @GetMapping("/")
     public String index() {
-        logger.trace("TRACE"); //detalhado
-        logger.debug("DEBUG"); //ambiente de desenvolvimento
-        logger.info("INFO"); // ambiente de produção
-        logger.warn("WARN"); // informações de imcompatibilidade
-        logger.error("ERROR"); //erro durante o processo,detalhes do erro gerado, blocos try catch
+        log.trace("TRACE"); //detalhado
+        log.debug("DEBUG"); //ambiente de desenvolvimento
+        log.info("INFO"); // ambiente de produção
+        log.warn("WARN"); // informações de imcompatibilidade
+        log.error("ERROR"); //erro durante o processo,detalhes do erro gerado, blocos try catch
         return "Logginf Strong Boot...";
     }
 
