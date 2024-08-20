@@ -20,7 +20,6 @@ import java.util.UUID;
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserCourseController {
-
     private final UserClient userClient;
 
     public UserCourseController(UserClient userClient) {
