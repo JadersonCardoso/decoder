@@ -1,4 +1,4 @@
-package com.ead.course.controllers.dtos;
+package com.ead.course.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

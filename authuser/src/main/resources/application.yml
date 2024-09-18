@@ -26,3 +26,7 @@ logging:
     root: INFO  #log de toda aplicação, pasta root
     org.springframework.web: DEBUG #mostra os detalhes da requisição
     org.hibernate: INFO
+ead:
+  api:
+    url:
+      course: 'http://localhost:8082'

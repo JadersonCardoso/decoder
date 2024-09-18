@@ -1,8 +1,8 @@
 package com.ead.course.controllers;
 
 import com.ead.course.clients.AuthUserClient;
-import com.ead.course.controllers.dtos.SubscriptionDto;
-import com.ead.course.controllers.dtos.UserDto;
+import com.ead.course.dtos.SubscriptionDto;
+import com.ead.course.dtos.UserDto;
 import com.ead.course.enums.UserStatus;
 import com.ead.course.models.CourseModel;
 import com.ead.course.services.CourseService;
@@ -62,8 +62,7 @@ public class CourseUserController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
             }
         }
-        var courseUserModel = this.courseUserService.save(courseModelOptional.get().convertToCourseUserModel(subscriptionDto.getUserId()));
-
+        var courseUserModel = this.courseUserService.saveAndSendSubscriptionUseInCourse(courseModelOptional.get().convertToCourseUserModel(subscriptionDto.getUserId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(courseUserModel);
     }
 

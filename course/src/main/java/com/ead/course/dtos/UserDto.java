@@ -1,4 +1,4 @@
-package com.ead.course.controllers.dtos;
+package com.ead.course.dtos;
 
 import com.ead.course.enums.UserStatus;
 import com.ead.course.enums.UserType;
