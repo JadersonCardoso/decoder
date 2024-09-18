@@ -27,7 +27,7 @@ public class InstructorController {
         this.userService = userService;
     }
 
-    @PostMapping("/subscription")
+    @PutMapping("/subscription")
     ResponseEntity<Object> saveSubscriptionInstructor(@RequestBody @Valid InstructoDto instructoDto) {
         Optional<UserModel> userModelOptional = this.userService.findById(instructoDto.getUserId());
         if (!userModelOptional.isPresent()) {
