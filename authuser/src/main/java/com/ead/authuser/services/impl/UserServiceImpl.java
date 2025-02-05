@@ -1,11 +1,8 @@
 package com.ead.authuser.services.impl;
 
-import com.ead.authuser.models.UserCourseModel;
 import com.ead.authuser.models.UserModel;
-import com.ead.authuser.repositories.UserCourseRepository;
 import com.ead.authuser.repositories.UserRepository;
 import com.ead.authuser.services.UserService;
-import com.ead.authuser.specifications.SpecificationTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,10 +16,8 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserCourseRepository userCourseRepository;
-    public UserServiceImpl(UserRepository userRepository, UserCourseRepository userCourseRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.userCourseRepository = userCourseRepository;
     }
     @Override
     public List<UserModel> findAll() {
@@ -35,10 +30,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void delete(UserModel userModel) {
-        List<UserCourseModel> userCourseModelList = this.userCourseRepository.findAllUSerCourseIntoUser(userModel.getUserId());
-        if (!userCourseModelList.isEmpty()) {
-            this.userCourseRepository.deleteAll(userCourseModelList);
-        }
         this.userRepository.delete(userModel);
     }
     @Transactional
