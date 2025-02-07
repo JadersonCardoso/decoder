@@ -1,11 +1,13 @@
 server:
   port: 8087
+  servlet:
+    context-path: '/ead-authuser/'
 
 spring:
   application:
     name: ead-authuser-service
   datasource:
-    url: jdbc:postgresql://172.20.217.157:5432/ead-authuser
+    url: jdbc:postgresql://172.20.217.157:5432/ead-authuser-v2
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -21,6 +23,8 @@ spring:
   output:
     ansi:
       enabled: always
+  rabbitmq:
+    addresses: amqps://fqvxjwyl:PDXrZmgdsAw09m_XTJ9iTgEVwFS_tiLT@moose.rmq.cloudamqp.com/fqvxjwyl
 
 logging:
   level:
@@ -31,7 +35,7 @@ logging:
 ead:
   api:
     url:
-      course: 'http://localhost:8082'
+      course: 'http://ead-course-service/ead-course'
 
 eureka:
   client:
