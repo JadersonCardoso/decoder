@@ -24,7 +24,7 @@ spring:
     ansi:
       enabled: always
   rabbitmq:
-    addresses: amqps://fqvxjwyl:PDXrZmgdsAw09m_XTJ9iTgEVwFS_tiLT@moose.rmq.cloudamqp.com/fqvxjwyl
+    addresses: ${RABBITMQ_HOST}
 
 logging:
   level:
