@@ -54,4 +54,11 @@ public class CourseModel implements Serializable {
     //@OnDelete(action = OnDeleteAction.CASCADE) //delega ao banco de dados a responsabilidade de apagar os modulos
     private Set<ModuleModel> modules;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "TB_COURSES_USERS",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<UserModel> users;
+
 }
