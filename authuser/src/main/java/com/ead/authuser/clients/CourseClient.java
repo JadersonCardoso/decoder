@@ -29,23 +29,24 @@ public class CourseClient {
         this.utilsService = utilsService;
     }
 
-    public Page<CourseDto> getAllCoursesByUser(UUID userId, Pageable pageable) {
+    public Page<CourseDto> getAllCoursesByUser(UUID userId, Pageable pageable){
         List<CourseDto> searchResult = null;
         ResponseEntity<ResponsePageDto<CourseDto>> result = null;
-        String url = REQUEST_URL_COURSE + this.utilsService.createUrl(userId, pageable);
-        log.debug("Resquest URL: {}", url);
-        log.info("Resquest URL: {}", url);
-        try {
+        String url = REQUEST_URL_COURSE + utilsService.createUrlGetAllCoursesByUser(userId, pageable);
+        log.debug("Request URL: {} ", url);
+        log.info("Request URL: {} ", url);
+        try{
             ParameterizedTypeReference<ResponsePageDto<CourseDto>> responseType = new ParameterizedTypeReference<ResponsePageDto<CourseDto>>() {};
-            result = this.restTemplate.exchange(url, HttpMethod.GET, null, responseType);
+            result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
             searchResult = result.getBody().getContent();
-            log.debug("Response Numer of Elements: {}", searchResult.size());
-        } catch (HttpStatusCodeException e) {
-            log.error("Error request /courses {}", e);
+            log.debug("Response Number of Elements: {} ", searchResult.size());
+        } catch (HttpStatusCodeException e){
+            log.error("Error request /courses {} ", e);
         }
-        log.info("Ending request /courses userId{} ", userId);
+        log.info("Ending request /courses userId {} ", userId);
         return result.getBody();
     }
+
 
 
 }

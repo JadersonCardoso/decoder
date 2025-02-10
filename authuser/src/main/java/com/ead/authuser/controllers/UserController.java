@@ -63,7 +63,7 @@ public class UserController {
         if (!userModelOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
-        this.userService.delete(userModelOptional.get());
+        this.userService.deleteUser(userModelOptional.get());
         log.debug("DELET deleteUser userId received {} ",userId);
         log.info("User deleted successfully userId {} ",userId);
         return ResponseEntity.ok("User deleted success");
@@ -83,7 +83,7 @@ public class UserController {
         userModel.setPhoneNumber(userDto.getPhoneNumber());
         userModel.setCpf(userDto.getCpf());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-        this.userService.save(userModel);
+        this.userService.updateUser(userModel);
         log.debug("PUT updateUser userId received {} ",userModel.getUserId());
         log.info("User updated successfully userId {} ",userModel.getUserId());
         return ResponseEntity.ok(userModel);
@@ -95,7 +95,7 @@ public class UserController {
                                             @JsonView(UserDto.UserView.PasswordPut.class) UserDto userDto) {
         Optional<UserModel> userModelOptional = this.userService.findById(userId);
         if (!userModelOptional.isPresent()) {
-            log.warn("Username {} is Already Taken. ",userDto.getUserName());
+            log.warn("Username {} is Already Taken. ",userDto.getUsername());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         } if (userModelOptional.get().getPassword().equals(userDto.getOldPassword())) {
             log.warn("Mismatched old passworld userId. ",userId);
@@ -104,7 +104,7 @@ public class UserController {
         var userModel = userModelOptional.get();
         userModel.setPassword(userDto.getOldPassword());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-        this.userService.save(userModel);
+        this.userService.updatePassword(userModel);
         return ResponseEntity.ok("Password updated successfully.");
     }
 

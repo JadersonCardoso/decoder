@@ -34,7 +34,7 @@ public class AuthenticationController {
                                               @Validated(UserDto.UserView.RegistrationPost.class)
                                               @JsonView(UserDto.UserView.RegistrationPost.class) UserDto userDto) {
         log.debug("POST registerUser userDto received {} ",userDto.toString());
-        if (this.userService.existsByUsername(userDto.getUserName())) {
+        if (this.userService.existsByUsername(userDto.getUsername())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Username is Already Taken!");
         }
         if (this.userService.existsByEmail(userDto.getEmail())) {
@@ -48,7 +48,7 @@ public class AuthenticationController {
         userModel.setUserType(UserType.STUDENT);
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("UTC")));
-        this.userService.save(userModel);
+        this.userService.saveUser(userModel);
         log.debug("POST registerUser userId received {} ",userModel.getUserId());
         log.info("User saved successfully userId {} ",userModel.getUserId());
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
