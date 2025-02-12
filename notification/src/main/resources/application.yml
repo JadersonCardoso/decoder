@@ -1,13 +1,13 @@
 server:
   port: 8084
   servlet:
-    context-path: '/ead-notification'
+    context-path: '/ead-notification/'
 
 spring:
   application:
     name: ead-notification-service
   config:
-    import: 'optional:configserver:'
+    import: 'configserver:'
     cloud:
       config:
         discovery:
