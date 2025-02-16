@@ -12,9 +12,17 @@ spring:
           default-label: main
           username: ${GIT_USER_NAME}
           password: ${GIT_PASSWORD}
+ead:
+  configServer:
+    username: ${USER_NAME_CONFIG}
+    password: ${PASSWORD_CONFIG}
+  serviceRegistry:
+    username: ${USER_NAME_REGISTRY}
+    password: ${PASSWORD_REGISTRY}
+
 eureka:
   client:
     serviceUrl:
-      defaultZone: 'http://localhost:8761/eureka'
+      defaultZone: 'http://${ead.serviceRegistry.username}:${ead.serviceRegistry.password}@localhost:8761/eureka'
   instance:
     hostname: localhost
