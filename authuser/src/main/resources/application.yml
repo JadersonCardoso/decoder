@@ -2,18 +2,18 @@
 #  port: 8087
 #  servlet:
 #    context-path: '/ead-authuser/'
-#
+
 spring:
   application:
     name: ead-authuser-service
   config:
-    import: 'configserver:'
+    import: 'optional:configserver:'
   cloud:
     config:
       discovery:
         service-id: ead-config-server
-      username: configserver
-      password: 'ead123cs'
+      username: ${USER_NAME_CONFIG}
+      password: ${PASSWORD_CONFIG}
 #  datasource:
 #    url: jdbc:postgresql://172.20.217.157:5432/ead-authuser-v2
 #    username: postgres
@@ -74,5 +74,5 @@ spring:
 #      legacy:
 #        enabled: true
 #      enabled: true
-#
-#
+
+
