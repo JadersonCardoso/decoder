@@ -1,5 +1,8 @@
 package com.ead.authuser.controllers;
 
+import com.ead.authuser.configs.security.JwtProvider;
+import com.ead.authuser.dtos.JwtDto;
+import com.ead.authuser.dtos.LoginDto;
 import com.ead.authuser.dtos.UserDto;
 import com.ead.authuser.enums.RoleType;
 import com.ead.authuser.enums.UserStatus;
@@ -9,10 +12,16 @@ import com.ead.authuser.models.UserModel;
 import com.ead.authuser.services.RoleService;
 import com.ead.authuser.services.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.core.SecurityContext;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,16 +33,17 @@ import java.time.ZoneId;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/auth")
 public class AuthenticationController {
-
-//    Logger logger = LogManager.getLogger(AuthenticationController.class);
-
     private final UserService userService;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
-    public AuthenticationController(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
+    public AuthenticationController(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
         this.userService = userService;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtProvider = jwtProvider;
     }
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody
@@ -62,6 +72,15 @@ public class AuthenticationController {
         log.debug("POST registerUser userId received {} ",userModel.getUserId());
         log.info("User saved successfully userId {} ",userModel.getUserId());
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<JwtDto> authenticateUser(@Valid @RequestBody LoginDto loginDto) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtProvider.generateJwt(authentication);
+        return ResponseEntity.ok(new JwtDto(jwt));
     }
     @GetMapping("/")
     public String index() {
