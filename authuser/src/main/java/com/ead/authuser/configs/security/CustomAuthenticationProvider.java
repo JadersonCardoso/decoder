@@ -1,5 +1,6 @@
 package com.ead.authuser.configs.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,13 +12,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
-    private final UserDetailsServiceImpl userDetailsService;
-    public CustomAuthenticationProvider(UserDetailsServiceImpl userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        System.out.println("CustomAuthenticationProvider foi chamado!");
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
             return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(),

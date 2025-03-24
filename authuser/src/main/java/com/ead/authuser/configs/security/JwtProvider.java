@@ -5,13 +5,13 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.security.SignatureException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Component
@@ -23,21 +23,29 @@ public class JwtProvider {
     private int jwtExpirationMs;
 
     public String generateJwt(Authentication authentication) {
-        UserDetails userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+
+        final String roles = userPrincipal.getAuthorities().stream()
+                .map(role -> {
+                    return role.getAuthority();
+                }).collect(Collectors.joining(","));
+
         return Jwts.builder()
-                .subject((userPrincipal.getUsername()))
+                .subject((userPrincipal.getUserId().toString()))
+                .claim("roles", roles)
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
 
-    public String getUsernameJwt(String token) {
+    public String getSubjectJwt(String token) {
         Key key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecret));
         return Jwts.parser().setSigningKey(key)
                 .build()
                 .parseSignedClaims(token).getBody().getSubject();
     }
+
 
     public boolean validateJwt(String authToken) {
         try {
